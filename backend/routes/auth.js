@@ -1,7 +1,9 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const zod = require("zod");
 const { User } = require("../models");
 const bcrypt = require("bcryptjs");
+const { JWT_SECRET } = require("../config");
 const router = express.Router();
 
 const registerBody = zod.object({
@@ -24,7 +26,7 @@ router.post("/register" , async (req, res)=>{
         username: req.body.username
     })
     if (existingUser){
-        return res.status(411).json({ message: "username already taken" });
+        return res.status(402).json({ message: "username already taken" });
     }
     const hashedPassword = await bcrypt.hash(req.body.password,10);
 
@@ -35,7 +37,7 @@ router.post("/register" , async (req, res)=>{
     })
     const userId = user._id;
 
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET)
+    const token = jwt.sign({ userId }, JWT_SECRET)
 
     res.json({
         message: "User created successfully",
