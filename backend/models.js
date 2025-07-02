@@ -6,29 +6,38 @@ mongoose.connect("mongodb+srv://himanshujagtap05:sVZ24zgMLnwkluJo@cluster0.0cnw4
 .catch( err => console.error("MongoDB Connection ERROR",err))
 
 const userSchema = new mongoose.Schema({
-    username: { 
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        minLength: 3,
-        maxLength: 20,
-     },     
+    userName: { 
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      minLength: 3,
+      maxLength: 20,
+    },
 
-    email: { 
-        type: String,
-        required: true, 
-        unique: true 
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
+      maxLength: 50,
+    },
+
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+      maxLength: 50,
     },
 
     password: { 
-        type: String,
-        required: true 
+      type: String,
+      required: true 
     },
 
     monthlyIncome: { 
-        type: Number,
-        default: 0  
+      type: Number,
+      default: 0  
     },
 })
 
