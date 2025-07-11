@@ -1,0 +1,519 @@
+import React, { useState } from 'react';
+import { Eye, EyeOff, TrendingUp, Plus, Target, DollarSign, Calendar, ArrowRight, User, Lock, Mail, Edit3, X, Check } from 'lucide-react';
+
+const FinaiApp = () => {
+  const [currentPage, setCurrentPage] = useState('register');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [user, setUser] = useState({ firstName: 'Raje', lastName: 'Patel' });
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: '' });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.email) newErrors.email = 'Email is required';
+    if (!formData.password) newErrors.password = 'Password is required';
+    if (currentPage === 'register') {
+      if (!formData.firstName) newErrors.firstName = 'First name is required';
+      if (!formData.lastName) newErrors.lastName = 'Last name is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      if (currentPage === 'register') {
+        setUser({ firstName: formData.firstName, lastName: formData.lastName });
+        setCurrentPage('dashboard');
+      } else {
+        setCurrentPage('dashboard');
+      }
+    }
+  };
+
+  const sampleTransactions = [
+    { id: 1, description: 'Coffee Shop', amount: -4.50, date: '2024-07-03', category: 'Food' },
+    { id: 2, description: 'Salary Deposit', amount: 3200.00, date: '2024-07-01', category: 'Income' },
+    { id: 3, description: 'Grocery Store', amount: -85.30, date: '2024-06-30', category: 'Food' },
+    { id: 4, description: 'Gas Station', amount: -45.00, date: '2024-06-29', category: 'Transport' }
+  ];
+
+  const goals = [
+    { id: 1, title: 'Emergency Fund', current: 2500, target: 5000, color: 'bg-emerald-500' },
+    { id: 2, title: 'Vacation', current: 800, target: 2000, color: 'bg-blue-500' },
+    { id: 3, title: 'New Car', current: 12000, target: 25000, color: 'bg-purple-500' }
+  ];
+
+  const PageTransition = ({ children }) => (
+    <div className="animate-in fade-in-0 slide-in-from-right-4 duration-300">
+      {children}
+    </div>
+  );
+
+  const RegisterPage = () => (
+    <PageTransition>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900">Join Finai</h1>
+              <p className="text-gray-600 mt-2">Start your financial journey today</p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
+                      placeholder="John"
+                    />
+                  </div>
+                  {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
+                      placeholder="Doe"
+                    />
+                  </div>
+                  {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="john@example.com"
+                  />
+                </div>
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02] transition-all duration-200 font-medium shadow-lg"
+              >
+                Create Account
+              </button>
+            </div>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <button
+                  onClick={() => setCurrentPage('login')}
+                  className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-all duration-200"
+                >
+                  Sign in
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </PageTransition>
+  );
+
+  const LoginPage = () => (
+    <PageTransition>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-xl p-8 transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mb-4">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
+              <p className="text-gray-600 mt-2">Sign in to your Finai account</p>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="john@example.com"
+                  />
+                </div>
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              </div>
+
+              <div className="flex items-center justify-between">
+                <label className="flex items-center">
+                  <input type="checkbox" className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                </label>
+                <button type="button" className="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                  Forgot password?
+                </button>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02] transition-all duration-200 font-medium shadow-lg"
+              >
+                Sign In
+              </button>
+            </div>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                Don't have an account?{' '}
+                <button
+                  onClick={() => setCurrentPage('register')}
+                  className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-all duration-200"
+                >
+                  Create account
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </PageTransition>
+  );
+
+  const UpdateProfileModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-in fade-in-0 duration-300">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Update Profile</h2>
+            <button
+              onClick={() => setShowUpdateModal(false)}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                <input
+                  type="text"
+                  defaultValue={user.firstName}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                <input
+                  type="text"
+                  defaultValue={user.lastName}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                defaultValue="raje@example.com"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+              <input
+                type="password"
+                placeholder="Leave blank to keep current password"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={() => setShowUpdateModal(false)}
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowUpdateModal(false)}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium"
+              >
+                Update Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const DashboardPage = () => (
+    <PageTransition>
+      <div className="min-h-screen bg-gray-50">
+        {/* Navigation */}
+        <nav className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                  <TrendingUp className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-xl font-bold text-gray-900">Finai</h1>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                  Dashboard
+                </button>
+                <button className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                  Goals
+                </button>
+                <button
+                  onClick={() => setShowUpdateModal(true)}
+                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors flex items-center"
+                >
+                  <User className="w-4 h-4 mr-1" />
+                  Profile
+                </button>
+                <button 
+                  onClick={() => setCurrentPage('login')}
+                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Welcome Section */}
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome back, {user.firstName}! 👋
+            </h2>
+            <p className="text-gray-600">Here's what's happening with your finances today.</p>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Monthly Income</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">$3,200</p>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-green-600">
+                <ArrowRight className="w-4 h-4 mr-1" />
+                <span className="text-sm">+12% from last month</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Total Expenses</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">$1,134</p>
+                </div>
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-red-600">
+                <ArrowRight className="w-4 h-4 mr-1" />
+                <span className="text-sm">-8% from last month</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Savings Rate</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">64%</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Target className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-blue-600">
+                <ArrowRight className="w-4 h-4 mr-1" />
+                <span className="text-sm">Great job!</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Recent Transactions */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Recent Transactions</h3>
+                <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 flex items-center">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Transaction
+                </button>
+              </div>
+              <div className="space-y-4">
+                {sampleTransactions.map((transaction) => (
+                  <div key={transaction.id} className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors duration-200">
+                    <div className="flex items-center">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                        transaction.amount > 0 ? 'bg-green-100' : 'bg-red-100'
+                      }`}>
+                        <DollarSign className={`w-5 h-5 ${
+                          transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                        }`} />
+                      </div>
+                      <div className="ml-4">
+                        <p className="font-medium text-gray-900">{transaction.description}</p>
+                        <p className="text-sm text-gray-500">{transaction.date}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-semibold ${
+                        transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                      </p>
+                      <p className="text-sm text-gray-500">{transaction.category}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Active Goals */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">Active Goals</h3>
+              <div className="space-y-6">
+                {goals.map((goal) => (
+                  <div key={goal.id} className="p-4 border border-gray-200 rounded-xl hover:border-gray-300 transition-colors duration-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-medium text-gray-900">{goal.title}</h4>
+                      <span className="text-sm text-gray-500">
+                        ${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full transition-all duration-500 ${goal.color}`}
+                        style={{ width: `${(goal.current / goal.target) * 100}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      {Math.round((goal.current / goal.target) * 100)}% complete
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {showUpdateModal && <UpdateProfileModal />}
+    </PageTransition>
+  );
+
+  return (
+    <div className="font-sans">
+      {currentPage === 'register' && <RegisterPage />}
+      {currentPage === 'login' && <LoginPage />}
+      {currentPage === 'dashboard' && <DashboardPage />}
+    </div>
+  );
+};
+
+export default FinaiApp;
+
+take this code as consideration and try to make it organize form 
+what i mean is you can make different components or sepreat files as your wish, so what i want you to do is make it in a proper structural way to write it and increase my code's readability and understandability 

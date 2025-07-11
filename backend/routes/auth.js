@@ -10,7 +10,7 @@ const { authMiddleware } = require("../middleware");
 
 //signup route
 const registerBody = zod.object({
-    userName : zod.string().email(),
+    email : zod.string().email(),
     firstName: zod.string(),
     lastName: zod.string(),
     password: zod.string(),
@@ -23,15 +23,15 @@ router.post("/register" , async (req, res)=>{
     }
 
     const existingUser = await User.findOne({
-        userName: req.body.userName
+        email: req.body.email
     })
     if (existingUser){
-        return res.status(402).json({ message: "userName already taken" });
+        return res.status(402).json({ message: "email already taken" });
     }
     const hashedPassword = await bcrypt.hash(req.body.password,10);
 
     const user = await User.create({
-        userName: req.body.userName,
+        email: req.body.email,
         password: hashedPassword,
         firstName: req.body.firstName,
         lastName: req.body.lastName
@@ -50,7 +50,7 @@ router.post("/register" , async (req, res)=>{
 //login/signin route 
 
 const loginBody = zod.object({
-    userName : zod.string().email(),
+    email : zod.string().email(),
     password: zod.string(),
 })
 
@@ -59,7 +59,7 @@ router.post("/login" , async (req, res)=>{
     if (!success){
         return res.status(400).json({ message: "Invalid inputs" });
     }
-    const user = await User.findOne({ userName: req.body.userName });
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
         return res.status(401).json({ message: "user not found " });
         }
