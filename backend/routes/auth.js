@@ -61,7 +61,7 @@ router.post("/login" , async (req, res)=>{
     }
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-        return res.status(401).json({ message: "user not found " });
+        return res.status(401).json({ message: "This email is not Registered" });
         }
     const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
   if (!isPasswordCorrect) {
@@ -81,6 +81,7 @@ const updateBody = zod.object({
     password: zod.string().optional(),
     firstName: zod.string().optional(),
     lastName: zod.string().optional(),
+    monthlyIncome: zod.number().optional(),
 });
 
 router.put("/update", authMiddleware, async (req, res) => {
@@ -91,11 +92,52 @@ router.put("/update", authMiddleware, async (req, res) => {
         });
     }
 
-    await User.updateOne({_id: req.user.userId},{$set: req.body});
+    await User.updateOne({_id: req.user},{$set: req.body});
 
     res.json({
         message: "Updated successfully"
     });
+});
+
+router.get("/username", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findOne({_id: req.user});
+        
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            monthlyIncome: user.monthlyIncome,
+        });
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+router.put("/income", authMiddleware, async (req, res) => {
+  try {
+    const { monthlyIncome } = req.body;
+
+    if (!monthlyIncome) {
+      return res.status(400).json({ message: "Monthly income is required" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { monthlyIncome },
+      { new: true }
+    );
+
+    res.json({ message: "Income updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+    console.log(error)
+  }
 });
 
 module.exports = router

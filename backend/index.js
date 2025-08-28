@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 
-const app = express(); // Initialize app before using it
+const app = express();
 
 app.use(cors());
 app.use(express.json());

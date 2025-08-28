@@ -9,6 +9,7 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
+  const [showIncomePrompt, setShowIncomePrompt] = useState(false);
 
   const navigate = useNavigate();
 
