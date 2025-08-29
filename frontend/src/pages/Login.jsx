@@ -3,11 +3,13 @@ import { InputBox } from '../components/inputbox';
 import { Button } from '../components/button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import MonthlyIncomePrompt from '../components/monthlyIncome';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [showIncomePrompt, setShowIncomePrompt] = useState(false);
   
 
   const handleLogin = async () => {
@@ -18,7 +20,8 @@ const Login = () => {
       });
 
       localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');
+      // ✅ Show income prompt instead of going directly to dashboard
+      setShowIncomePrompt(true);
     } catch (err) {
       console.error('Login failed:', err.response?.data?.message || err.message);
       alert(err.response?.data?.message || 'Invalid credentials');
@@ -63,6 +66,15 @@ const Login = () => {
           </a>
         </p>
       </div>
+
+      {/* Income Modal appears here */}
+      {showIncomePrompt && (
+        <MonthlyIncomePrompt
+          onClose={() => setShowIncomePrompt(false)}
+          onSuccess={() => navigate("/dashboard")}
+        />
+      )}
+
     </div>
   );
 };

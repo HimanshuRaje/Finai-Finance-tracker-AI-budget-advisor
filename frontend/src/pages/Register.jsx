@@ -1,29 +1,33 @@
-import React, { useState } from 'react';
-import { InputBox } from '../components/inputbox';
-import { Button } from '../components/button';
+import React, { useState } from "react";
+import { InputBox } from "../components/inputbox";
+import { Button } from "../components/button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MonthlyIncomePrompt from "../components/monthlyIncome";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
-  const [showIncomePrompt, setShowIncomePrompt] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/api/v1/auth/register", {
-        email,
-        password,
-        firstName,
-        lastName,
-      });
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/auth/register",
+        {
+          email,
+          password,
+          firstName,
+          lastName,
+        }
+      );
 
+      // Save token in localStorage
       localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+
     } catch (err) {
       console.error("Registration failed:", err.response?.data?.message || err.message);
       alert(err.response?.data?.message || "Something went wrong");
@@ -37,7 +41,7 @@ const Register = () => {
           Create Your Finai Account
         </h2>
 
-        <form className="space-y-5" onSubmit={e => e.preventDefault()}>
+        <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
           <InputBox
             label="First Name"
             name="firstName"
@@ -77,8 +81,11 @@ const Register = () => {
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <a href="/login" className="text-blue-600 font-medium hover:underline">
+          Already have an account?{" "}
+          <a
+            href="/login"
+            className="text-blue-600 font-medium hover:underline"
+          >
             Login here
           </a>
         </p>

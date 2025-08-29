@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
 
   monthlyIncome: { 
     type: Number,
-    default: 0  
+    default: null  
   },
 })
 
