@@ -27,18 +27,29 @@ export default function MonthlyIncomePrompt({ onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-400 bg-opacity-900 flex items-center justify-center">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-96">
-        <h2 className="text-xl font-semibold mb-4">Enter Your Monthly Income</h2>
-
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-xl font-bold ">
+            Enter Your Monthly Income
+          </h1>
+          <p className="text-l font-semibold mb-2">
+            Must insert certain amount
+          </p>
+          <p className="text-l font mb-4">
+            (negative amount will be considered as positive)
+          </p>
+        </div>
+        
         <input
           type="number"
           value={income}
           onChange={(e) => setIncome(e.target.value)}
           placeholder="e.g. 50000"
           className="w-full p-2 border rounded-lg mb-4"
+          min={0}
         />
-
+  
         <div className="flex justify-end space-x-2">
           <button
             onClick={onClose}
