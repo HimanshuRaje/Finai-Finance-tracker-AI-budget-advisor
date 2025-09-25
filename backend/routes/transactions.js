@@ -3,51 +3,6 @@ const { authMiddleware } = require("../middleware");
 const { User, Transaction } = require("../models");
 const router = express.Router();
 
-router.post("/details",authMiddleware, async(req, res)=>{
-    try{
-        const{type,amount,category,source,note,date}= req.body;
-
-        const transaction = await Transaction.create({
-            user: req.user,
-            type,amount,category,source,note,date,
-        })
-        res.status(201).json({message: "Transaction added",transaction})
-    }catch(err){
-        console.error(err);
-        res.status(500).json({message:"Faild to add transaction"})
-    }
-})
-
-router.get("/details",authMiddleware, async(req,res)=>{
-    try{
-        const transaction = await Transaction.findById(req.user).sort({date: -1})
-        const income = transaction.filter(t=> t.type ==="income")
-        const expense = transaction.filter(t=> t.type ==="expense")
-
-        //metrics
-        const totalIncome = income.reduce((acc, t) => acc + t.amount, 0);
-        const totalExpenses = expense.reduce((acc, t) => acc + t.amount, 0);
-        const savings = totalIncome - totalExpenses;
-        // Expense breakdown %
-        const expenseBreakdown = {};
-        expense.forEach(t => {
-        expenseBreakdown[t.category] = (expenseBreakdown[t.category] || 0) + t.amount;
-        });
-        for (let cat in expenseBreakdown) {
-        expenseBreakdown[cat] = Math.round((expenseBreakdown[cat] / totalExpenses) * 100);
-        }
-
-        res.json({
-        transactions: { income, expense },
-        metrics: { totalIncome, totalExpenses, savings, expenseBreakdown }
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to fetch transactions" });
-    }
-})
-
 router.get("/income",authMiddleware, async (req,res)=>{
     try {
         
@@ -72,5 +27,72 @@ router.get("/income",authMiddleware, async (req,res)=>{
         })
     }
 })
+
+
+/**
+ * @route POST /api/v1/transaction
+ * @desc Create or update monthly transaction summary
+ */
+router.post("/transaction", authMiddleware, async (req, res) => {
+  try {
+    const { month, expenses } = req.body;
+
+    let transaction = await Transaction.findOne({ user: req.user, month });
+
+    if (transaction) {
+      // Update existing transaction summary
+      transaction.expenses = expenses;
+      await transaction.save();
+      return res.json({ message: "Transaction updated", transaction });
+    }
+
+    // Create new transaction summary
+    transaction = new Transaction({
+      user: req.user,
+      month,
+      expenses
+    });
+    await transaction.save();
+
+    res.json({ message: "Transaction created", transaction });
+  } catch (error) {
+    console.error("Error saving transaction:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+/**
+ * @route GET /api/v1/transaction/:month
+ * @desc Get transaction summary for a specific month
+ */
+router.get("/:month", authMiddleware, async (req, res) => {
+  try {
+    const { month } = req.params;
+    const transaction = await Transaction.findOne({ user: req.user, month });
+
+    if (!transaction) {
+      return res.status(404).json({ error: "No transaction found for this month" });
+    }
+
+    res.json(transaction);
+  } catch (error) {
+    console.error("Error fetching transaction:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+/**
+ * @route GET /api/v1/transaction
+ * @desc Get all monthly transaction summaries for user
+ */
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const transactions = await Transaction.find({ user: req.user }).sort({ month: -1 });
+    res.json(transactions);
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 module.exports = router

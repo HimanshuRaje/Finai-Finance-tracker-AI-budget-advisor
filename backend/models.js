@@ -51,15 +51,26 @@ const userSchema = new mongoose.Schema({
   }
 })
 
-const transactionSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  type: { type: String, enum: ["income", "expense"], required: true },
-  amount: { type: Number, required: true },
-  category: { type: String },       // only needed for expense
-  source: { type: String },         // only needed for income
-  note: { type: String },
-  date: { type: Date, default: Date.now },
-}, { timestamps: true });
+const MonthlySummarySchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  month: {
+    type: String, // e.g. "2025-09"
+    required: true
+  },
+  expenses: {
+    type: Map,
+    of: Number, // { "Food": 8000, "Travel": 3000 }
+    default: {}
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
 
 const goalSchema = new mongoose.Schema({
@@ -91,7 +102,8 @@ const goalSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 const Goal = mongoose.model("Goal", goalSchema);
-const Transaction = mongoose.model("Transaction", transactionSchema);
+const Transaction = mongoose.model("MonthlySummary", MonthlySummarySchema);
+
 
 module.exports = {
   User,
