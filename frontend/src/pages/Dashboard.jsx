@@ -1,9 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppBar } from '../components/appbar';
+import axios from 'axios';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+const [monthlyIncome, setMonthlyIncome] = useState("0");
+const [savings, setMonthlySavings] = useState("0");
+const [balance, setMonthlyBalance] = useState("0");
+
+const handleMonthlyIncome = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      "http://localhost:4000/api/v1/account/income",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ send token properly
+        },
+      }
+    );
+
+    // update state with the income from backend
+    setMonthlyIncome(response.data.income);
+    setMonthlySavings(response.data.savings);
+    setMonthlyBalance(response.data.balance);
+
+  } catch (error) {
+    console.error("Error fetching monthly income:", error);
+  }
+};
+handleMonthlyIncome();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,16 +49,16 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div className="bg-green-100 border-l-4 border-green-500 p-4 rounded-xl shadow-md">
-          <p className="text-sm text-gray-500">Total Income</p>
-          <h2 className="text-2xl font-semibold text-green-700">₹ 0</h2>
+          <p className="text-sm text-gray-500">Total Monthly Income</p>
+          <h2 className="text-2xl font-semibold text-green-700">₹ {monthlyIncome}</h2>
         </div>
         <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded-xl shadow-md">
-          <p className="text-sm text-gray-500">Total Expenses</p>
-          <h2 className="text-2xl font-semibold text-red-700">₹ 0</h2>
+          <p className="text-sm text-gray-500">Savings Goal</p>
+          <h2 className="text-2xl font-semibold text-red-700">₹ {savings}</h2>
         </div>
         <div className="bg-blue-100 border-l-4 border-blue-500 p-4 rounded-xl shadow-md">
           <p className="text-sm text-gray-500">Current Balance</p>
-          <h2 className="text-2xl font-semibold text-blue-700">₹ 0</h2>
+          <h2 className="text-2xl font-semibold text-blue-700">₹ {balance}</h2>
         </div>
       </div>
 

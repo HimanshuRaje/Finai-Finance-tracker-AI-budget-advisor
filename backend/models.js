@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect("mongodb+srv://himanshujagtap05:sVZ24zgMLnwkluJo@cluster0.0cnw4.mongodb.net/finai")
+mongoose.connect(process.env.MONGO_URI)
 
 .then(()=> console.log("connected to MongoDB successfully!"))
 .catch( err => console.error("MongoDB Connection ERROR",err))
@@ -39,36 +39,26 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: null  
   },
+
+  savingsGoal: {
+    type: Number,
+    default: null
+  },
+
+  currentBalance:{
+    type: Number,
+    default: null
+  }
 })
 
 const transactionSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Link to the User who owns this transaction
-    required: true,
-  },
-  type: {
-    type: String,
-    enum: ["income", "expense"], // only allowed values
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-  amount: {
-    type: Number,
-    required: true,
-    min: 0, // amount can't be negative
-  },
-  date: {
-    type: Date,
-    default: Date.now, // auto-sets current date if not provided
-  },
-  note: {
-    type: String,
-    default: "",
-  },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  type: { type: String, enum: ["income", "expense"], required: true },
+  amount: { type: Number, required: true },
+  category: { type: String },       // only needed for expense
+  source: { type: String },         // only needed for income
+  note: { type: String },
+  date: { type: Date, default: Date.now },
 }, { timestamps: true });
 
 

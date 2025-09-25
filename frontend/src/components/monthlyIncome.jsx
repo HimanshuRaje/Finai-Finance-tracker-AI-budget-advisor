@@ -4,22 +4,25 @@ import axios from "axios";
 
 export default function MonthlyIncomePrompt({ onClose, onSuccess }) {
   const [income, setIncome] = useState("");
+  const [balance, setBalance] = useState("");
+  const [savings, setSavings] = useState("");
 
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put("http://localhost:4000/api/v1/auth/income",
-        {monthlyIncome: income},
+      await axios.put(
+        "http://localhost:4000/api/v1/auth/income",
+        { monthlyIncome: income, currentBalance: balance, savingsGoal: savings },
         {
           headers: {
-          Authorization : `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      onSuccess(); // notify parent (e.g. redirect)
-      onClose();   // close modal
+      onSuccess();
+      onClose();
     } catch (error) {
       console.error(error);
       alert("Error saving income");
@@ -40,7 +43,24 @@ export default function MonthlyIncomePrompt({ onClose, onSuccess }) {
             (negative amount will be considered as positive)
           </p>
         </div>
+
+        {/* Balance */}
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Current Balance
+        </label>
+        <input
+          type="number"
+          value={balance}
+          onChange={(e) => setBalance(e.target.value)}
+          placeholder="e.g. 23000"
+          className="w-full p-2 border rounded-lg mb-4"
+          min={0}
+        />
         
+        {/* Income */}
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Monthly Income
+        </label>
         <input
           type="number"
           value={income}
@@ -49,7 +69,20 @@ export default function MonthlyIncomePrompt({ onClose, onSuccess }) {
           className="w-full p-2 border rounded-lg mb-4"
           min={0}
         />
-  
+
+        {/* Savings */}
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Savings Goal
+        </label>
+        <input
+          type="number"
+          value={savings}
+          onChange={(e) => setSavings(e.target.value)}
+          placeholder="e.g. 10000"
+          className="w-full p-2 border rounded-lg mb-4"
+          min={0}
+        />
+
         <div className="flex justify-end space-x-2">
           <button
             onClick={onClose}

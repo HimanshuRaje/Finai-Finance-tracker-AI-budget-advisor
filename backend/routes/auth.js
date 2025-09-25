@@ -122,16 +122,16 @@ router.get("/username", authMiddleware, async (req, res) => {
 // in auth.js
 router.put("/income",authMiddleware, async (req, res) => {
   try {
-    const { monthlyIncome } = req.body;
+    const { monthlyIncome, savingsGoal, currentBalance } = req.body;
 
-    if (!monthlyIncome) {
-      return res.status(400).json({ message: "Monthly income is required" });
+    if (!currentBalance) {
+      return res.status(400).json({ message: "Monthly income, savings goal and current balance is required" });
     }
 
     // ✅ use req.user.id (if middleware sets it correctly)
     const user = await User.findByIdAndUpdate(
       req.user,
-      { monthlyIncome },
+      { monthlyIncome,savingsGoal,currentBalance },
       { new: true }   // return updated document
     );
 
